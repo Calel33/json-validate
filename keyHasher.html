@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Hustle Pro Key Hasher</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            outline: none;
+            border-color: #5BA9F9;
+        }
+        button {
+            background: #5BA9F9;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background: #4A98E8;
+        }
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .hash-output {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+        .instructions {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-bottom: 30px;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔑 Agent Hustle Pro Key Hasher</h1>
+        
+        <div class="instructions">
+            <h3>Instructions:</h3>
+            <ol>
+                <li>Enter a user's pro key in the field below</li>
+                <li>Click "Hash Key" to generate the secure hash</li>
+                <li>Copy the generated hash and add it to your <code>pro-keys-hashed.json</code> file</li>
+                <li>The original key is never stored - only the hash is used for validation</li>
+            </ol>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Security Note:</strong> This tool should only be used by administrators. Never share the original keys or this hashing tool with users.
+        </div>
+
+        <div class="form-group">
+            <label for="plainKey">User's Pro Key:</label>
+            <input type="password" id="plainKey" placeholder="Enter the user's pro key...">
+        </div>
+
+        <div class="form-group">
+            <label for="saltInput">Salt (leave default unless changed in config):</label>
+            <input type="text" id="saltInput" value="AgentHustle2024ProSalt!@#$%^&*()_+SecureKey">
+        </div>
+
+        <button onclick="hashAndDisplay()">🔐 Hash Key</button>
+
+        <div id="result" class="result" style="display: none;">
+            <h3>Generated Hash:</h3>
+            <div id="hashedResult" class="hash-output"></div>
+            <p><strong>Instructions:</strong></p>
+            <ol>
+                <li>Copy the hash above</li>
+                <li>Add it to the <code>proKeyHashes</code> array in your JSON file</li>
+                <li>Save and upload the updated JSON file</li>
+                <li>The user can now validate their key in the extension</li>
+            </ol>
+            <button onclick="copyHash()">📋 Copy Hash</button>
+        </div>
+
+        <div class="instructions">
+            <h3>Sample JSON Structure:</h3>
+            <pre style="background: #f8f9fa; padding: 15px; border-radius: 6px; overflow-x: auto;">
+{
+  "version": "1.0",
+  "lastUpdated": "2024-01-15T10:30:00Z",
+  "algorithm": "SHA-256",
+  "salt": "AgentHustle2024ProSalt!@#$%^&*()_+SecureKey",
+  "proKeyHashes": [
+    "your_generated_hash_here",
+    "another_hash_here"
+  ]
+}</pre>
+        </div>
+    </div>
+
+    <script>
+        let currentHash = '';
+
+        async function hashKey(plainKey, salt) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(plainKey + salt);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function hashAndDisplay() {
+            const plainKey = document.getElementById('plainKey').value.trim();
+            const salt = document.getElementById('saltInput').value.trim();
+            const resultDiv = document.getElementById('result');
+            const hashedResultDiv = document.getElementById('hashedResult');
+
+            if (!plainKey) {
+                alert('Please enter a pro key to hash');
+                return;
+            }
+
+            if (!salt) {
+                alert('Please enter a salt value');
+                return;
+            }
+
+            try {
+                const hash = await hashKey(plainKey, salt);
+                currentHash = hash;
+                
+                hashedResultDiv.textContent = hash;
+                resultDiv.style.display = 'block';
+                
+                // Clear the input for security
+                document.getElementById('plainKey').value = '';
+                
+            } catch (error) {
+                alert('Error generating hash: ' + error.message);
+            }
+        }
+
+        function copyHash() {
+            if (currentHash) {
+                navigator.clipboard.writeText(currentHash).then(() => {
+                    alert('Hash copied to clipboard!');
+                }).catch(err => {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = currentHash;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('Hash copied to clipboard!');
+                });
+            }
+        }
+
+        // Allow Enter key to hash
+        document.getElementById('plainKey').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                hashAndDisplay();
+            }
+        });
+    </script>
+</body>
+</html> 
