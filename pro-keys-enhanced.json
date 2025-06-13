@@ -1,0 +1,16 @@
+{
+  "version": "2.0",
+  "lastUpdated": "2025-01-13T12:00:00.000Z",
+  "salt": "AgentHustle2024ProSalt!@#$%^&*()_+SecureKey",
+  "keys": {
+    "001dd6ce206c1ed07076ec30c839a68108511fd6080614a3060966472af1a0aa": {
+      "status": "active",
+      "createdAt": "2025-06-13T00:00:00.000Z",
+      "expiresAt": "2026-06-13T00:00:00.000Z",
+      "lastUsed": "2025-01-13T12:00:00.000Z",
+      "usageCount": 0,
+      "tier": "pro",
+      "notes": "Annual subscription"
+    }
+  }
+}
